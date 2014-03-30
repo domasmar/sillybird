@@ -2,18 +2,39 @@
 
 <FlappyGame>:
     bird: flappy_bird
+    column: flappy_column
 
     canvas:
         Color:
             rgb: .98, .98, .98
+        Rectangle:
+            size: self.width, 10
+        Rectangle:
+            size: self.width, 10
+            pos: 0, self.height - 10
+
     FlappyBird:
         id: flappy_bird
+        center: self.parent.center
 
+    FlappyColumn:
+        id: flappy_column
 
 <FlappyBird>:
+    pos: 0, 0
     canvas: 
         Ellipse:
             pos: self.pos
-            size: 50, 40
+            size: 20, 15
 
 <FlappyColumn>:
+    pos: 0,0
+    canvas:
+        Rectangle:
+            pos: 100, self.max_c 
+            size: 30, self.parent.height
+        Rectangle:
+            pos: 100, self.min_c - self.parent.height
+            size: 30, self.parent.height
+
+
