@@ -1,0 +1,19 @@
+#:kivy 1.8.0
+
+<FlappyGame>:
+    bird: flappy_bird
+
+    canvas:
+        Color:
+            rgb: .98, .98, .98
+    FlappyBird:
+        id: flappy_bird
+
+
+<FlappyBird>:
+    canvas: 
+        Ellipse:
+            pos: self.pos
+            size: 50, 40
+
+<FlappyColumn>:
