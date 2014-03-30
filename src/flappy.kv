@@ -2,7 +2,6 @@
 
 <FlappyGame>:
     bird: flappy_bird
-    column: flappy_column
 
     canvas:
         Color:
@@ -12,13 +11,13 @@
         Rectangle:
             size: self.width, 10
             pos: 0, self.height - 10
+    Label:
+        pos: 10, 10
+        text: 'Taškai: ' + str(root.points) 
 
     FlappyBird:
         id: flappy_bird
         center: self.parent.center
-
-    FlappyColumn:
-        id: flappy_column
 
 <FlappyBird>:
     pos: 0, 0
@@ -29,12 +28,6 @@
 
 <FlappyColumn>:
     pos: 0,0
-    canvas:
-        Rectangle:
-            pos: 100, self.max_c 
-            size: 30, self.parent.height
-        Rectangle:
-            pos: 100, self.min_c - self.parent.height
-            size: 30, self.parent.height
+
 
 
