@@ -13,7 +13,7 @@
             pos: 0, self.height - 10
     Label:
         pos: 10, 10
-        text: 'Taškai: ' + str(root.points) 
+        text: 'Taškai: ' + str(root.points)
 
     FlappyBird:
         id: flappy_bird
@@ -21,13 +21,17 @@
 
 <FlappyBird>:
     pos: 0, 0
+    size: 20, 15
     canvas: 
         Ellipse:
             pos: self.pos
             size: 20, 15
 
 <FlappyColumn>:
-    pos: 0,0
-
-
-
+    pos: self.pos_x, self.pos_y
+    size: 30, self.col_height
+    canvas:
+        Rectangle:
+            pos: self.pos_x, self.pos_y
+            size: 30, self.col_height
+       

@@ -31,85 +31,82 @@ class FlappyBird(Widget):
         self.x_pos = -30
         self.velocity_y = 0
 
+
 class FlappyColumn(Widget):
-    gap = 100
-    max_c = 0
-    min_c = 0
-    top_column_position = []
-    bottom_column_position = []
+    pos_x = NumericProperty(0)
+    pos_y = NumericProperty(0)
+    col_height = NumericProperty(0)
+    passed = False
 
-    def __init__(self, game):
+    def __init__(self, pos_y, height, game):
         super(FlappyColumn, self).__init__()
-        self.game = game
-        with self.game.canvas:
-            Color(randint(10, 100) / 100.0, randint(10, 100) / 100.0, randint(10, 100) / 100.0)
-            self.rect_t = Rectangle(pos=[0,0], size= [30, self.game.height])
-            self.rect_b = Rectangle(pos=[0,0], size= [30, self.game.height])
-
-    def repaint(self):
-        with self.game.canvas:
-            Color(.98, .98, .0)
-            self.rect_t.pos = self.top_column_position
-            self.rect_b.pos = self.bottom_column_position
-
-    def new(self, diff):
-        self.min_c = randint(self.game.height/2 - diff/2, self.game.height/2 + diff/2)
-        self.max_c = self.min_c + self.gap
-        self.top_column_position = [self.game.width, self.max_c]
-        self.bottom_column_position = [self.game.width, self.min_c - self.game.height]
-        self.repaint()
-
-    def update(self):
-        self.top_column_position[0] -= 3
-        self.bottom_column_position[0] -= 3
-        self.repaint()
-        self.collision()
-
-    def collision(self):
-        if self.game.collide_widget(self.game.bird) or self.game.collide_widget(self.game.bird):
-            pass
-            # print "Kolizija"
-
-class FlappyColumns():
-    columns = []
-
-    def __init__(self, game):
+        self.pos_y = pos_y
+        self.col_height = height
+        self.pos_x = game.width
         self.game = game
 
-    def new(self, point):
-        column = FlappyColumn(self.game)
-        column.new(point)
-        self.columns.append(column)
-
     def update(self):
-        for c in self.columns:
-            c.update() 
+        self.pos_x -= 1
+        self.check_passed()
+
+    def check_passed(self):
+        if self.x + self.size[0] < self.game.bird.pos[0] and not self.passed:
+            self.game.points += 0.5
+            self.passed = True
 
 
 class FlappyGame(Widget):
     bird = ObjectProperty(None)
+    columns = ListProperty([])
     points = NumericProperty(0)
-
+    gap = 80
+    
     def __init__(self):
         super(FlappyGame, self).__init__()
-        self.columns = FlappyColumns(self)
 
     def update(self, dt):
         self.bird.move()
-        self.columns.update()
+        if len(self.columns) >= 50:
+            del self.columns[0:1]
+        for c in self.columns:
+            c.update() 
+            self.check_collide(c)
+
+    def check_collide(self, c):
+        if self.bird.collide_widget(c):
+            print "collided" + str(self.points)
+            print c.pos
+            print c.size
+            print self.bird.pos
+            print self.bird.size
+
 
     def new_column(self, dt):
-        self.columns.new(self.points * 1.1)
+        mid = randint(self.height/2 - self.gap, \
+            self.height/2 + self.gap)
+        height = mid - self.gap/2
+        y_pos = height + 2*self.gap
+        column_bot = FlappyColumn(0, height, self)
+        column_top = FlappyColumn(y_pos, self.height - height, self)
+        self.canvas.add(Color(randint(20, 100) / 100., \
+            randint(20, 100) / 100., \
+            randint(20, 100) / 100.))
+        self.add_widget(column_bot)
+        self.add_widget(column_top)
+        self.columns.append(column_bot)
+        self.columns.append(column_top)
 
     def on_touch_down(self, touch):
         self.bird.reset()
 
+
 class FlappyApp(App):
     def build(self):
         game = FlappyGame()
-        Clock.schedule_interval(game.update, 1/60)
-        Clock.schedule_interval(game.new_column, 1.5)
+        Clock.schedule_interval(game.update, 1./60)
+        Clock.schedule_interval(game.new_column, 1.1)
         return game
+
 
 if __name__ == '__main__':
     FlappyApp().run()
