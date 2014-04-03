@@ -1,7 +1,7 @@
 from kivy.app import App
 from kivy.clock import Clock
 from kivy.properties import NumericProperty, ObjectProperty, \
-    ReferenceListProperty, ListProperty
+    ReferenceListProperty, ListProperty, StringProperty
 from kivy.uix.widget import Widget
 from kivy.vector import Vector
 from kivy.graphics import Color, Line, Rectangle, Rotate, PushMatrix, PopMatrix
@@ -39,10 +39,12 @@ class FlappyColumn(Widget):
     pos_x = NumericProperty(0)
     pos_y = NumericProperty(0)
     col_height = NumericProperty(0)
+    type = StringProperty('up')
     passed = False
 
-    def __init__(self, pos_y, height, game):
+    def __init__(self, pos_y, height, game, type):
         super(FlappyColumn, self).__init__()
+        self.type = type
         self.pos_y = pos_y
         self.col_height = height
         self.pos_x = game.width
@@ -64,7 +66,7 @@ class FlappyGame(Widget):
     bird = ObjectProperty(None)
     columns = ListProperty([])
     points = NumericProperty(0)
-    gap = 40
+    gap = 50
     
     def __init__(self):
         super(FlappyGame, self).__init__()
@@ -97,11 +99,8 @@ class FlappyGame(Widget):
             self.height/2 + self.gap)
         height = mid - self.gap/2
         y_pos = height + 2*self.gap
-        column_bot = FlappyColumn(0, height, self)
-        column_top = FlappyColumn(y_pos, self.height - height, self)
-        self.canvas.add(Color(randint(20, 100) / 100., \
-            randint(20, 100) / 100., \
-            randint(20, 100) / 100.))
+        column_bot = FlappyColumn(0, height, self, 'up')
+        column_top = FlappyColumn(y_pos, self.height - height, self, 'down')
         self.add_widget(column_bot)
         self.add_widget(column_top)
         self.columns.append(column_bot)

@@ -5,6 +5,9 @@
         Color:
             rgb: .98, .98, .98
         Rectangle:
+            source: 'img/background.png'
+            size: self.size
+        Rectangle:
             size: self.width, 10
         Rectangle:
             size: self.width, 10
@@ -14,7 +17,7 @@
         text: 'Taškai: ' + str(root.points)
 
 <FlappyBird>:
-    size: 20, 15
+    size: 43, 30
     canvas.after:
         PushMatrix:
         Rotate:
@@ -22,16 +25,18 @@
             angle: self.rotation
             origin: self.center 
         Ellipse:
+            source: 'img/bird.png'
             pos: self.pos
-            size: 20, 15
+            size: 43, 30
         PopMatrix:
 
 <FlappyColumn>:
     pos: self.pos_x, self.pos_y
-    size: 30, self.col_height
+    size: 52, self.col_height
     canvas:
         Rectangle:
+            source: 'img/column_up.png' if self.type == 'up' else 'img/column_down.png'
             pos: self.pos_x, self.pos_y
-            size: 30-5, self.col_height-5
+            size: 52, self.col_height-5
 
        
