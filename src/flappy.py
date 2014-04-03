@@ -114,7 +114,7 @@ class FlappyApp(App):
     def build(self):
         game = FlappyGame()
         Clock.schedule_interval(game.update, 1./60)
-        Clock.schedule_interval(game.new_column, 2)
+        Clock.schedule_interval(game.new_column, 1.7)
         return game
 
 
