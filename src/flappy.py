@@ -64,7 +64,7 @@ class FlappyGame(Widget):
     bird = ObjectProperty(None)
     columns = ListProperty([])
     points = NumericProperty(0)
-    gap = 80
+    gap = 50
     
     def __init__(self):
         super(FlappyGame, self).__init__()
