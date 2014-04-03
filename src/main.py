@@ -64,7 +64,7 @@ class FlappyGame(Widget):
     bird = ObjectProperty(None)
     columns = ListProperty([])
     points = NumericProperty(0)
-    gap = 50
+    gap = 40
     
     def __init__(self):
         super(FlappyGame, self).__init__()
@@ -74,21 +74,22 @@ class FlappyGame(Widget):
 
     def update(self, dt):
         self.bird.move()
-        if self.columns[0].pos_x < -50:
-            self.remove_widget(self.columns[0])
-            self.remove_widget(self.columns[1])
-            del self.columns[0:1]
+        if len(self.columns) > 0:
+            if self.columns[0].pos_x < -50:
+                self.remove_widget(self.columns[0])
+                self.remove_widget(self.columns[1])
+                del self.columns[0]
+                del self.columns[0]
         for c in self.columns:
             c.update() 
             self.check_collide(c)
 
+    def collide(self):
+        pass
+
     def check_collide(self, c):
         if self.bird.collide_widget(c):
-            print "collided" + str(self.points)
-            print c.pos
-            print c.size
-            print self.bird.pos
-            print self.bird.size
+            self.collide()
 
 
     def new_column(self, dt):
@@ -120,4 +121,3 @@ class FlappyApp(App):
 
 if __name__ == '__main__':
     FlappyApp().run()
-    
