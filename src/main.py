@@ -8,7 +8,7 @@ from kivy.graphics import Color, Line, Rectangle, Rotate, PushMatrix, PopMatrix
 import math
 from random import randint
 
-class FlappyBird(Widget):
+class SillyBird(Widget):
     x_step = 1
     x_pos = NumericProperty(-3.00)
     velocity_y = NumericProperty(0.00)
@@ -17,7 +17,7 @@ class FlappyBird(Widget):
     rotation = NumericProperty(10)
 
     def function(self, x):
-        return x * x * (-0.05   )
+        return x * x * (-0.05)
 
     def next_position(self):
         self.velocity_y = self.function(self.x_pos + self.x_step) - \
@@ -35,7 +35,7 @@ class FlappyBird(Widget):
         self.velocity_y = 00
 
 
-class FlappyColumn(Widget):
+class SillyColumn(Widget):
     pos_x = NumericProperty(0)
     pos_y = NumericProperty(0)
     col_height = NumericProperty(0)
@@ -43,7 +43,7 @@ class FlappyColumn(Widget):
     passed = False
 
     def __init__(self, pos_y, height, game, type):
-        super(FlappyColumn, self).__init__()
+        super(SillyColumn, self).__init__()
         self.type = type
         self.pos_y = pos_y
         self.col_height = height
@@ -62,15 +62,15 @@ class FlappyColumn(Widget):
             self.passed = True
 
 
-class FlappyGame(Widget):
+class SillyGame(Widget):
     bird = ObjectProperty(None)
     columns = ListProperty([])
     points = NumericProperty(0)
     gap = 50
     
     def __init__(self):
-        super(FlappyGame, self).__init__()
-        self.bird = FlappyBird()
+        super(SillyGame, self).__init__()
+        self.bird = SillyBird()
         self.add_widget(self.bird)
         self.bird.pos = [20, 150]
 
@@ -87,7 +87,7 @@ class FlappyGame(Widget):
             self.check_collide(c)
 
     def collide(self):
-        pass
+        print "Bird collided"
 
     def check_collide(self, c):
         if self.bird.collide_widget(c):
@@ -99,8 +99,8 @@ class FlappyGame(Widget):
             self.height/2 + self.gap)
         height = mid - self.gap/2
         y_pos = height + 2*self.gap
-        column_bot = FlappyColumn(0, height, self, 'up')
-        column_top = FlappyColumn(y_pos, self.height - height, self, 'down')
+        column_bot = SillyColumn(0, height, self, 'up')
+        column_top = SillyColumn(y_pos, self.height - height, self, 'down')
         self.add_widget(column_bot)
         self.add_widget(column_top)
         self.columns.append(column_bot)
@@ -110,13 +110,13 @@ class FlappyGame(Widget):
         self.bird.reset()
 
 
-class FlappyApp(App):
+class SillyApp(App):
     def build(self):
-        game = FlappyGame()
+        game = SillyGame()
         Clock.schedule_interval(game.update, 1./60)
         Clock.schedule_interval(game.new_column, 1.7)
         return game
 
 
 if __name__ == '__main__':
-    FlappyApp().run()
+    SillyApp().run()
