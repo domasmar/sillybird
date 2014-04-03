@@ -4,7 +4,7 @@ from kivy.properties import NumericProperty, ObjectProperty, \
     ReferenceListProperty, ListProperty
 from kivy.uix.widget import Widget
 from kivy.vector import Vector
-from kivy.graphics import Color, Line, Rectangle
+from kivy.graphics import Color, Line, Rectangle, Rotate, PushMatrix, PopMatrix
 import math
 from random import randint
 
@@ -14,22 +14,25 @@ class FlappyBird(Widget):
     velocity_y = NumericProperty(0.00)
     velocity = ReferenceListProperty(velocity_y)
     points = []
+    rotation = NumericProperty(10)
 
     def function(self, x):
-        return x * x * (-0.1)
+        return x * x * (-0.05   )
 
     def next_position(self):
-        self.velocity_y = self.function(self.x_pos + 1) - \
-            self.function(self.x_pos)
-        self.x_pos = 1 + self.x_pos
+        self.velocity_y = self.function(self.x_pos + self.x_step) - \
+            self.function(self.x_pos) 
+        self.x_pos = self.x_step + self.x_pos
 
     def move(self):
         self.next_position()
         self.pos = Vector([0, self.velocity[0]]) + self.pos
+        rad = math.atan(self.velocity_y / self.x_step)
+        self.rotation = math.degrees(rad)
 
     def reset(self):
         self.x_pos = -30
-        self.velocity_y = 0
+        self.velocity_y = 00
 
 
 class FlappyColumn(Widget):
@@ -46,7 +49,9 @@ class FlappyColumn(Widget):
         self.game = game
 
     def update(self):
-        self.pos_x -= 1
+        PushMatrix()
+        self.pos_x -= 2
+        PopMatrix()
         self.check_passed()
 
     def check_passed(self):
@@ -63,10 +68,15 @@ class FlappyGame(Widget):
     
     def __init__(self):
         super(FlappyGame, self).__init__()
+        self.bird = FlappyBird()
+        self.add_widget(self.bird)
+        self.bird.pos = [20, 150]
 
     def update(self, dt):
         self.bird.move()
         if len(self.columns) >= 50:
+            self.remove_widget(self.columns[0])
+            self.remove_widget(self.columns[1])
             del self.columns[0:1]
         for c in self.columns:
             c.update() 
@@ -104,7 +114,7 @@ class FlappyApp(App):
     def build(self):
         game = FlappyGame()
         Clock.schedule_interval(game.update, 1./60)
-        Clock.schedule_interval(game.new_column, 1.1)
+        Clock.schedule_interval(game.new_column, 2)
         return game
 
 

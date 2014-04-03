@@ -1,8 +1,6 @@
 #:kivy 1.8.0
 
 <FlappyGame>:
-    bird: flappy_bird
-
     canvas:
         Color:
             rgb: .98, .98, .98
@@ -15,17 +13,18 @@
         pos: 10, 10
         text: 'Taškai: ' + str(root.points)
 
-    FlappyBird:
-        id: flappy_bird
-        center: self.parent.center
-
 <FlappyBird>:
-    pos: 0, 0
     size: 20, 15
-    canvas: 
+    canvas.after:
+        PushMatrix:
+        Rotate:
+            axis: 0, 0, 1
+            angle: self.rotation
+            origin: self.center 
         Ellipse:
             pos: self.pos
             size: 20, 15
+        PopMatrix:
 
 <FlappyColumn>:
     pos: self.pos_x, self.pos_y
@@ -33,5 +32,6 @@
     canvas:
         Rectangle:
             pos: self.pos_x, self.pos_y
-            size: 30, self.col_height
+            size: 30-5, self.col_height-5
+
        
