@@ -85,7 +85,7 @@ class SillyGame(Widget):
         for c in self.columns:
             c.update() 
             self.check_collide(c)
-
+    # TODO
     def collide(self):
         print "Bird collided"
 
