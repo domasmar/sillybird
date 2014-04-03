@@ -1,0 +1,3 @@
+title=<FlappyBird>
+author=<Domas>
+orientation=<portrait|landscape>
