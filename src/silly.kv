@@ -1,6 +1,6 @@
 #:kivy 1.8.0
 
-<FlappyGame>:
+<SillyGame>:
     canvas:
         Color:
             rgb: .98, .98, .98
@@ -16,7 +16,7 @@
         pos: 10, 10
         text: 'Taškai: ' + str(root.points)
 
-<FlappyBird>:
+<SillyBird>:
     size: 43, 30
     canvas.after:
         PushMatrix:
@@ -30,7 +30,7 @@
             size: 43, 30
         PopMatrix:
 
-<FlappyColumn>:
+<SillyColumn>:
     pos: self.pos_x, self.pos_y
     size: 52, self.col_height
     canvas:
