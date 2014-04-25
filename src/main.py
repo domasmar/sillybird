@@ -39,7 +39,7 @@ class SillyColumn(Widget):
     pos_x = NumericProperty(0)
     pos_y = NumericProperty(0)
     col_height = NumericProperty(0)
-    type = StringProperty('up')
+    type = StringProperty()
     passed = False
 
     def __init__(self, pos_y, height, game, type):
