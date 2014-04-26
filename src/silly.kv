@@ -12,12 +12,14 @@
         Rectangle:
             size: self.width, 10
             pos: 0, self.height - 10
+
     Label:
         pos: 10, 10
-        text: 'Taškai: ' + str(root.points)
+        markup: True
+        text: '[size=25]Taškai: ' + str(root.points) + '[/size]'
 
 <SillyBird>:
-    size: 43, 30
+    size: 38, 25
     canvas.after:
         PushMatrix:
         Rotate:
@@ -30,10 +32,11 @@
             size: 43, 30
         PopMatrix:
 
+
 <SillyColumn>:
     pos: self.pos_x, self.pos_y
     size: 52, self.col_height
-    canvas:
+    canvas.before:
         Rectangle:
             source: 'img/column_up.png' if self.type == 'up' else 'img/column_down.png'
             pos: self.pos_x, self.pos_y

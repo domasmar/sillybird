@@ -5,8 +5,8 @@ from kivy.properties import NumericProperty, ObjectProperty, \
 from kivy.uix.widget import Widget
 from kivy.vector import Vector
 from kivy.graphics import Color, Line, Rectangle, Rotate, PushMatrix, PopMatrix
-import math
 from random import randint
+import math
 
 class SillyBird(Widget):
     x_step = 1
@@ -32,7 +32,16 @@ class SillyBird(Widget):
 
     def reset(self):
         self.x_pos = -30
-        self.velocity_y = 00
+        self.velocity_y = 0
+
+    def die_anim(self, dt):
+        if self.pos[1] > 20:
+            self.pos[1] -= 5
+        else:
+            return False
+
+    def die(self):
+        Clock.schedule_interval(self.die_anim, 1./60)
 
 
 class SillyColumn(Widget):
@@ -57,8 +66,9 @@ class SillyColumn(Widget):
         self.check_passed()
 
     def check_passed(self):
-        if self.x + self.size[0] < self.game.bird.pos[0] and not self.passed:
-            self.game.points += 0.5
+        if self.x + self.size[0] < self.game.bird.pos[0] and not self.passed \
+            and self.type == 'up':
+            self.game.points += 1
             self.passed = True
 
 
@@ -67,14 +77,18 @@ class SillyGame(Widget):
     columns = ListProperty([])
     points = NumericProperty(0)
     gap = 50
-    
+    # status
+    # 'run' game is running
+    # 'stop' game is stopped 
+    # 'pause' game is paused   
+    status = ''
+
     def __init__(self):
         super(SillyGame, self).__init__()
-        self.bird = SillyBird()
-        self.add_widget(self.bird)
-        self.bird.pos = [20, 150]
 
     def update(self, dt):
+        if self.status == 'stop' or self.status == 'pause':
+            return
         self.bird.move()
         if len(self.columns) > 0:
             if self.columns[0].pos_x < -50:
@@ -85,9 +99,9 @@ class SillyGame(Widget):
         for c in self.columns:
             c.update() 
             self.check_collide(c)
-    # TODO
+
     def collide(self):
-        print "Bird collided"
+        self.finish()
 
     def check_collide(self, c):
         if self.bird.collide_widget(c):
@@ -95,6 +109,8 @@ class SillyGame(Widget):
 
 
     def new_column(self, dt):
+        if self.status == 'stop' or self.status == 'pause':
+            return
         mid = randint(self.height/2 - self.gap, \
             self.height/2 + self.gap)
         height = mid - self.gap/2
@@ -107,14 +123,51 @@ class SillyGame(Widget):
         self.columns.append(column_top)
 
     def on_touch_down(self, touch):
+        if touch.pos[0] < 100:
+            self.toggle_pause()
+            return
+        if self.status == 'stop':
+            self.start()
+            return
         self.bird.reset()
+
+    def finish(self):
+        self.bird.die()
+        self.stop()
+
+    def toggle_pause(self):
+        if self.status == 'pause':
+            self.status = 'run'
+        elif self.status == 'run':
+            self.status = 'pause'
+
+    def stop(self):
+        self.status = 'stop'
+
+    def start(self):
+        self.status = 'run'
+        self.restart()
+        Clock.unschedule(self.update)
+        Clock.unschedule(self.new_column)        
+        Clock.schedule_interval(self.update, 1./60)
+        Clock.schedule_interval(self.new_column, 1.7)
+
+    def restart(self):
+        self.points = 0
+        for c in self.columns:
+            self.remove_widget(c)
+            del c
+        self.columns = []
+        self.remove_widget(self.bird)
+        self.bird = SillyBird()
+        self.add_widget(self.bird)
+        self.bird.pos = [20, 150]
 
 
 class SillyApp(App):
     def build(self):
         game = SillyGame()
-        Clock.schedule_interval(game.update, 1./60)
-        Clock.schedule_interval(game.new_column, 1.7)
+        game.start()
         return game
 
 
