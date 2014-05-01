@@ -13,7 +13,6 @@ class SillyBird(Widget):
     x_pos = NumericProperty(-3.00)
     velocity_y = NumericProperty(0.00)
     velocity = ReferenceListProperty(velocity_y)
-    points = []
     rotation = NumericProperty(10)
 
     def function(self, x):
@@ -35,13 +34,42 @@ class SillyBird(Widget):
         self.velocity_y = 0
 
     def die_anim(self, dt):
-        if self.pos[1] > 20:
+        if self.pos[1] > 10:
             self.pos[1] -= 5
         else:
             return False
 
     def die(self):
         Clock.schedule_interval(self.die_anim, 1./60)
+
+
+class TrackingLine(Widget):
+
+    def __init__(self, diff, bird):
+        super(TrackingLine, self).__init__()
+        self.diff = diff
+        self.bird = bird
+        self.points = [bird.pos[0] + 5, bird.pos[1]]
+        with self.canvas.after:
+            self.line = Line(points = self.points)
+
+    def print_points(self):
+        print self.points
+
+    def update(self):
+
+        for index, value in enumerate(self.points):
+            if index % 2 == 1:
+                continue
+            if (value < 0):
+                del self.points[index]
+                del self.points[index]
+            else:
+                self.points[index] -= 2
+
+        self.points.append(self.bird.pos[0] + 5)
+        self.points.append(self.bird.pos[1] + 5)
+        self.line.points = self.points
 
 
 class SillyColumn(Widget):
@@ -74,6 +102,7 @@ class SillyColumn(Widget):
 
 class SillyGame(Widget):
     bird = ObjectProperty(None)
+    tracking_line = ObjectProperty(None)
     columns = ListProperty([])
     points = NumericProperty(0)
     gap = 50
@@ -90,6 +119,7 @@ class SillyGame(Widget):
         if self.status == 'stop' or self.status == 'pause':
             return
         self.bird.move()
+        self.tracking_line.update()
         if len(self.columns) > 0:
             if self.columns[0].pos_x < -50:
                 self.remove_widget(self.columns[0])
@@ -150,7 +180,7 @@ class SillyGame(Widget):
         Clock.unschedule(self.update)
         Clock.unschedule(self.new_column)        
         Clock.schedule_interval(self.update, 1./60)
-        Clock.schedule_interval(self.new_column, 1.7)
+        Clock.schedule_interval(self.new_column, 1.3)
 
     def restart(self):
         self.points = 0
@@ -159,9 +189,12 @@ class SillyGame(Widget):
             del c
         self.columns = []
         self.remove_widget(self.bird)
+        self.remove_widget(self.tracking_line)
         self.bird = SillyBird()
         self.add_widget(self.bird)
-        self.bird.pos = [20, 150]
+        self.bird.pos = [150, 300]
+        self.tracking_line = TrackingLine(2, self.bird)
+        self.add_widget(self.tracking_line)
 
 
 class SillyApp(App):
