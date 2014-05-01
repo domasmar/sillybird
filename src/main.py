@@ -4,7 +4,7 @@ from kivy.properties import NumericProperty, ObjectProperty, \
     ReferenceListProperty, ListProperty, StringProperty
 from kivy.uix.widget import Widget
 from kivy.vector import Vector
-from kivy.graphics import Color, Line, Rectangle, Rotate, PushMatrix, PopMatrix
+from kivy.graphics import Line, PushMatrix, PopMatrix
 from random import randint
 import math
 
@@ -105,7 +105,7 @@ class SillyGame(Widget):
     tracking_line = ObjectProperty(None)
     columns = ListProperty([])
     points = NumericProperty(0)
-    gap = 50
+    gap = 70
     # status
     # 'run' game is running
     # 'stop' game is stopped 
@@ -134,9 +134,11 @@ class SillyGame(Widget):
         self.finish()
 
     def check_collide(self, c):
-        if self.bird.collide_widget(c):
+        if self.bird.pos[1] < 10 or self.bird.pos[1] > self.height:
             self.collide()
 
+        if self.bird.collide_widget(c):
+            self.collide()
 
     def new_column(self, dt):
         if self.status == 'stop' or self.status == 'pause':
